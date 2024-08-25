@@ -20,7 +20,9 @@ public:
 
 	template<typename T, typename T2>
 	void AskUserWord(T& UserWord, basic_istream<T2>& input, const string& messageForUser);
+	bool IsUniqueWord(const string& Word);
 	void AddNewWord();
+
 	void OutPutAllWords() const;
 	size_t GetWordsCount() const;
 };

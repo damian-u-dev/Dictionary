@@ -46,12 +46,31 @@ Dictionary::~Dictionary()
 	}
 }
 
+bool Dictionary::IsUniqueWord(const string& Word)
+{
+	for (auto Pair : Words)
+	{
+		if (Pair.first == Word)
+		{
+			cout << "You're trying to enter a word that already has a translation\n";
+			system("pause");
+			system("cls");
+			return false;
+		}
+	}
+	return true;
+}
+
 void Dictionary::AddNewWord()
 {
 	string UserMessage("Write a foreign word: ");
 
 	string ForeignWord;
-	AskUserWord(ForeignWord, cin, UserMessage);
+
+	do
+	{
+		AskUserWord(ForeignWord, cin, UserMessage);
+	} while (!IsUniqueWord(ForeignWord));
 
 
 	UserMessage = "Write a translation of \"" + ForeignWord + "\": ";
