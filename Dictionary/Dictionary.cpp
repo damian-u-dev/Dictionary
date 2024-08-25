@@ -41,3 +41,31 @@ void Dictionary::AddNewWord()
 
 	Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
 }
+
+void Dictionary::OutPutAllWords() const
+{
+	size_t wordCount = GetWordsCount();
+
+	if (wordCount == 0)
+	{
+		cout << "You don't have any words in the dictinary.";
+		system("pause");
+		system("cls");
+		return;
+	}
+
+	cout << "All the words: \n";
+
+	for (size_t i = 0; i < wordCount; i++)
+	{
+		cout << i + 1 << '.' << Words[i].first << " -> ";
+		wcout << Words[i].second << endl;
+	}
+
+	cout << "\nYou have " << wordCount << " translated words in your dictionary.\n";
+}
+
+int Dictionary::GetWordsCount() const
+{
+	return Words.size();
+}
