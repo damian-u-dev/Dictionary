@@ -11,7 +11,7 @@ int main()
 
 
 	Dictionary dictonary;
-	dictonary.OutPutAllWords();
+	dictonary.AddNewWord();
 
 	return 0;
 }

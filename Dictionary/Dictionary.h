@@ -16,12 +16,13 @@ private:
 
 public:
 	Dictionary();
+	~Dictionary();
 
 	template<typename T, typename T2>
 	void AskUserWord(T& UserWord, basic_istream<T2>& input, const string& messageForUser);
 	void AddNewWord();
 	void OutPutAllWords() const;
-	int GetWordsCount() const;
+	size_t GetWordsCount() const;
 };
 
 template<typename T, typename T2>

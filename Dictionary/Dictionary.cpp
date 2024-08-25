@@ -16,28 +16,48 @@ Dictionary::Dictionary()
 	{
 		return;
 	}
-	
+
 	string ForeignWord;
 	wstring TranslatedWord;
-		
+
 	while (getline(ReaderFile, ForeignWord) && getline(ReaderFile2, TranslatedWord))
 	{
 		Words.emplace_back(ForeignWord, TranslatedWord);
 	}
 }
 
+Dictionary::~Dictionary()
+{
+	fstream FileForeignWords(PathForeignWords, ios::out | ios::trunc);
+	wfstream FileTranslatedWords(PathTranslatedWords, ios::out | ios::trunc);
+
+	FileTranslatedWords.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
+
+	if (!FileForeignWords.is_open() || !FileTranslatedWords.is_open())
+	{
+		cout << "Couldn't open files\n";
+		return;
+	}
+
+	for (size_t i = 0; i < GetWordsCount(); i++)
+	{
+		FileForeignWords << Words[i].first << '\n';
+		FileTranslatedWords << Words[i].second << '\n';
+	}
+}
+
 void Dictionary::AddNewWord()
 {
 	string UserMessage("Write a foreign word: ");
-	
+
 	string ForeignWord;
-	AskUserWord(ForeignWord,cin,UserMessage);
-	
+	AskUserWord(ForeignWord, cin, UserMessage);
+
 
 	UserMessage = "Write a translation of \"" + ForeignWord + "\": ";
-	
+
 	wstring TranslatedWord;
-	AskUserWord(TranslatedWord,wcin,UserMessage);
+	AskUserWord(TranslatedWord, wcin, UserMessage);
 
 	Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
 }
@@ -65,7 +85,7 @@ void Dictionary::OutPutAllWords() const
 	cout << "\nYou have " << wordCount << " translated words in your dictionary.\n";
 }
 
-int Dictionary::GetWordsCount() const
+size_t Dictionary::GetWordsCount() const
 {
 	return Words.size();
 }
