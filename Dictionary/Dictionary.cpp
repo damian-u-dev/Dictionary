@@ -18,10 +18,26 @@ Dictionary::Dictionary()
 	}
 	
 	string ForeignWord;
-	wstring TranslationWord;
+	wstring TranslatedWord;
 		
-	while (getline(ReaderFile, ForeignWord) && getline(ReaderFile2, TranslationWord))
+	while (getline(ReaderFile, ForeignWord) && getline(ReaderFile2, TranslatedWord))
 	{
-		Words.emplace_back(ForeignWord, TranslationWord);
+		Words.emplace_back(ForeignWord, TranslatedWord);
 	}
+}
+
+void Dictionary::AddNewWord()
+{
+	string UserMessage("Write a foreign word: ");
+	
+	string ForeignWord;
+	AskUserWord(ForeignWord,cin,UserMessage);
+	
+
+	UserMessage = "Write a translation of \"" + ForeignWord + "\": ";
+	
+	wstring TranslatedWord;
+	AskUserWord(TranslatedWord,wcin,UserMessage);
+
+	Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
 }
