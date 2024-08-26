@@ -81,7 +81,7 @@ void Dictionary::AddNewWord()
 	Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
 }
 
-void Dictionary::OutPutAllWords() const
+void Dictionary::PrintAllWords() const
 {
 	size_t wordCount = GetWordsCount();
 

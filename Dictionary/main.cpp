@@ -41,7 +41,7 @@ void HandleInputError()
 
 void MainLoop()
 {
-	Dictionary dictonary;
+	Dictionary dictionary;
 
 	bool isRunning = true;
 	int userChoice{};
@@ -65,17 +65,17 @@ void MainLoop()
 		{
 		case 1:
 		{
-			dictonary.AddNewWord();
+			dictionary.AddNewWord();
 			break;
 		}
 		case 2:
 		{
-			dictonary.OutPutAllWords();
+			dictionary.PrintAllWords();
 			break;
 		}
 		case 3:
 		{
-			dictonary.SaveWordsInFile();
+			dictionary.SaveWordsInFile();
 			break;
 		}
 		case 0:
