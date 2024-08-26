@@ -102,6 +102,8 @@ void Dictionary::OutPutAllWords() const
 	}
 
 	cout << "\nYou have " << wordCount << " translated words in your dictionary.\n";
+	system("pause");
+	system("cls");
 }
 
 size_t Dictionary::GetWordsCount() const

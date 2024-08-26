@@ -57,6 +57,9 @@ void MainLoop()
 			continue;
 		}
 
+		cin.clear();
+		cin.ignore(LLONG_MAX, '\n');
+
 		switch (userChoice)
 		{
 		case 1:
