@@ -9,6 +9,15 @@ using namespace std;
 class Dictionary
 {
 private:
+	enum class StateOfGame
+	{
+		Working,
+		Guessed,
+		AnotherWord,
+		StopGame
+	};
+
+private:
 	vector<pair<string, wstring>> Words;
 
 	string PathForeignWords = R"(D:\ForeignWords.txt)";
@@ -21,6 +30,7 @@ public:
 	void AddNewWord();
 	void PrintAllWords() const;
 	void SaveWordsInFile() const;
+	void GuessTranslatedWord() const;
 
 private:
 	template<typename T, typename T2>
@@ -28,6 +38,9 @@ private:
 	bool IsUniqueWord(const string& Word);
 
 	size_t GetWordsCount() const;
+	int GenerateRandomIndex(int oldGuessedIndex) const;
+	StateOfGame ProcessUserInput(const pair<string, wstring>& newGuessedPair) const;
+	void ProcessGameState(StateOfGame GameState, const pair<string, wstring>& guessedPair,bool& isWork) const;
 };
 
 template<typename T, typename T2>

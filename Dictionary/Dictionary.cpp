@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "Dictionary.h"
+#include "Utils.h"
 #include <fstream>
 #include <locale>
 #include <codecvt>
@@ -46,15 +47,14 @@ Dictionary::~Dictionary()
 	}
 }
 
-bool Dictionary::IsUniqueWord(const string& Word)
+bool Dictionary::IsUniqueWord(const string& word)
 {
 	for (auto Pair : Words)
 	{
-		if (Pair.first == Word)
+		if (Pair.first == word)
 		{
 			cout << "You're trying to enter a word that already has a translation\n";
-			system("pause");
-			system("cls");
+			PauseAndClearConsole();
 			return false;
 		}
 	}
@@ -88,8 +88,7 @@ void Dictionary::PrintAllWords() const
 	if (wordCount == 0)
 	{
 		cout << "You don't have any words in the dictinary.";
-		system("pause");
-		system("cls");
+		PauseAndClearConsole();
 		return;
 	}
 
@@ -102,8 +101,7 @@ void Dictionary::PrintAllWords() const
 	}
 
 	cout << "\nYou have " << wordCount << " translated words in your dictionary.\n";
-	system("pause");
-	system("cls");
+	PauseAndClearConsole();
 }
 
 size_t Dictionary::GetWordsCount() const
@@ -113,15 +111,15 @@ size_t Dictionary::GetWordsCount() const
 
 void Dictionary::SaveWordsInFile() const
 {
-	if(GetWordsCount() == 0)
+	if (GetWordsCount() == 0)
 	{
 		cout << "You don't have any words to save them.\n";
 		return;
 	}
 
-	
+
 	const char* filePath = "FileWithWords.txt";
-	
+
 	fstream outputFile(filePath, ios::out);
 	wfstream outputFile2(filePath, ios::out | ios::app);
 
@@ -143,4 +141,93 @@ void Dictionary::SaveWordsInFile() const
 
 		outputFile.seekp(0, ios::end);
 	}
+}
+
+int Dictionary::GenerateRandomIndex(int oldGuessedIndex) const
+{
+	int newGuessedIndex{};
+	srand(time(nullptr));
+
+	do
+	{
+		newGuessedIndex = rand() % GetWordsCount();
+	} while (newGuessedIndex == oldGuessedIndex);
+
+	return newGuessedIndex;
+}
+
+Dictionary::StateOfGame Dictionary::ProcessUserInput(const pair<string, wstring>& newGuessedPair) const
+{
+	cout << "Write a translation of this word: \"" << newGuessedPair.first << "\"" << endl;
+	cout << "0. To stop guess words\n";
+	cout << "1. Guess another word\n";
+
+	wstring userWord;
+	getline(wcin, userWord);
+
+	if (userWord == newGuessedPair.second)
+	{
+		return StateOfGame::Guessed;
+	}
+	else if (userWord == L"0")
+	{
+		return StateOfGame::StopGame;
+	}
+	else if (userWord == L"1")
+	{
+		return StateOfGame::AnotherWord;
+	}
+	else
+	{
+		ClearConsole();
+		cout << "You didn't guess try again!\n";
+		PauseAndClearConsole();
+		return StateOfGame::Working;
+	}
+}
+
+void Dictionary::ProcessGameState(StateOfGame gameState, const pair<string, wstring>& guessedPair, bool& isGameActive) const
+{
+	switch (gameState)
+	{
+	case Dictionary::StateOfGame::Guessed:
+	{
+		cout << "\nYou guessed!\n";
+		PauseAndClearConsole();
+		break;
+	}
+	case Dictionary::StateOfGame::AnotherWord:
+	{
+		ClearConsole();
+		cout << "This word was: " << guessedPair.first << " -> ";
+		wcout << guessedPair.second << endl;
+		PauseAndClearConsole();
+		break;
+	}
+	case Dictionary::StateOfGame::StopGame:
+	{
+		isGameActive = false;
+		break;
+	}
+	}
+}
+
+void Dictionary::GuessTranslatedWord() const
+{
+	int oldGuessedIndex = -1;
+
+	bool isGameActive = true;
+	do
+	{
+		int newGuessedIndex = GenerateRandomIndex(oldGuessedIndex);
+		oldGuessedIndex = newGuessedIndex;
+		const auto& newGuessedPair = Words[newGuessedIndex];
+
+		StateOfGame gameState = StateOfGame::Working;
+		while (gameState == StateOfGame::Working)
+		{
+			gameState = ProcessUserInput(newGuessedPair);
+			ProcessGameState(gameState, newGuessedPair,isGameActive);
+		}
+	} while (isGameActive);
 }
