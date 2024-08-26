@@ -110,3 +110,37 @@ size_t Dictionary::GetWordsCount() const
 {
 	return Words.size();
 }
+
+void Dictionary::SaveWordsInFile() const
+{
+	if(GetWordsCount() == 0)
+	{
+		cout << "You don't have any words to save them.\n";
+		return;
+	}
+
+	
+	const char* filePath = "FileWithWords.txt";
+	
+	fstream outputFile(filePath, ios::out);
+	wfstream outputFile2(filePath, ios::out | ios::app);
+
+	outputFile2.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
+
+	if (!outputFile.is_open() || !outputFile2.is_open())
+	{
+		cout << "Couldn't create file.";
+		return;
+	}
+
+	for (const auto& wordPair : Words)
+	{
+		outputFile << wordPair.first << " -> ";
+		outputFile.flush();
+
+		outputFile2 << wordPair.second << '\n';
+		outputFile2.flush();
+
+		outputFile.seekp(0, ios::end);
+	}
+}

@@ -25,6 +25,7 @@ void PrintMenu()
 	cout << "Select what to do:\n";
 	cout << "1. Add new word\n";
 	cout << "2. Print all words\n";
+	cout << "3. Save all words in the file\n";
 	cout << "0. Exit\n";
 }
 
@@ -70,6 +71,11 @@ void MainLoop()
 		case 2:
 		{
 			dictonary.OutPutAllWords();
+			break;
+		}
+		case 3:
+		{
+			dictonary.SaveWordsInFile();
 			break;
 		}
 		case 0:

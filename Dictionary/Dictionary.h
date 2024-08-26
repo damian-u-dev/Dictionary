@@ -25,6 +25,7 @@ public:
 
 	void OutPutAllWords() const;
 	size_t GetWordsCount() const;
+	void SaveWordsInFile() const;
 };
 
 template<typename T, typename T2>
