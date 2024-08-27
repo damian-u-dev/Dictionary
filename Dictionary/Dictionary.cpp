@@ -7,34 +7,34 @@
 
 Dictionary::Dictionary()
 {
-	fstream ReaderFile(PathForeignWords, ios::in | ios::app);
-	wfstream ReaderFile2(PathTranslatedWords, ios::in | ios::app);
+	fstream fileForeignWords(PathForeignWords, ios::in | ios::app);
+	wfstream fileTranslatedWords(PathTranslatedWords, ios::in | ios::app);
 
-	ReaderFile2.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
+	fileTranslatedWords.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
 
 
-	if (!ReaderFile.is_open() || !ReaderFile2.is_open())
+	if (!fileForeignWords.is_open() || !fileTranslatedWords.is_open())
 	{
 		return;
 	}
 
-	string ForeignWord;
-	wstring TranslatedWord;
+	string foreignWord;
+	wstring translatedWord;
 
-	while (getline(ReaderFile, ForeignWord) && getline(ReaderFile2, TranslatedWord))
+	while (getline(fileForeignWords, foreignWord) && getline(fileTranslatedWords, translatedWord))
 	{
-		Words.emplace_back(ForeignWord, TranslatedWord);
+		Words.emplace_back(foreignWord, translatedWord);
 	}
 }
 
 Dictionary::~Dictionary()
 {
-	fstream FileForeignWords(PathForeignWords, ios::out | ios::trunc);
-	wfstream FileTranslatedWords(PathTranslatedWords, ios::out | ios::trunc);
+	fstream fileForeignWords(PathForeignWords, ios::out | ios::trunc);
+	wfstream fileTranslatedWords(PathTranslatedWords, ios::out | ios::trunc);
 
-	FileTranslatedWords.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
+	fileTranslatedWords.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
 
-	if (!FileForeignWords.is_open() || !FileTranslatedWords.is_open())
+	if (!fileForeignWords.is_open() || !fileTranslatedWords.is_open())
 	{
 		cout << "Couldn't open files\n";
 		return;
@@ -42,19 +42,19 @@ Dictionary::~Dictionary()
 
 	for (size_t i = 0; i < GetWordsCount(); i++)
 	{
-		FileForeignWords << Words[i].first << '\n';
-		FileTranslatedWords << Words[i].second << '\n';
+		fileForeignWords << Words[i].first << '\n';
+		fileTranslatedWords << Words[i].second << '\n';
 	}
 }
 
 bool Dictionary::IsUniqueWord(const string& word)
 {
-	for (auto Pair : Words)
+	for (auto pairWords : Words)
 	{
-		if (Pair.first == word)
+		if (pairWords.first == word)
 		{
 			cout << "You're trying to enter a word that already has a translation\n";
-			PauseAndClearConsole();
+			Utils::PauseAndClearConsole();
 			return false;
 		}
 	}
@@ -67,27 +67,27 @@ void Dictionary::AddNewWord()
 	
 	while (true)
 	{
-		string UserMessage("Write a foreign word: ");
-		string ForeignWord;
+		string userMessage("Write a foreign word: ");
+		string foreignWord;
 		
-		if (AskUserWord(ForeignWord, cin, UserMessage, "0"))
+		if (AskUserWord(foreignWord, cin, userMessage, "0"))
 		{
 			return;
 		}
-		if (!IsUniqueWord(ForeignWord))
+		if (!IsUniqueWord(foreignWord))
 		{
 			continue;
 		}
 		
-		UserMessage = "Write a translation of \"" + ForeignWord + "\": ";
-		wstring TranslatedWord;
+		userMessage = "Write a translation of \"" + foreignWord + "\": ";
+		wstring translatedWord;
 		
-		if (AskUserWord(TranslatedWord, wcin, UserMessage,L"0"))
+		if (AskUserWord(translatedWord, wcin, userMessage,L"0"))
 		{
 			return;
 		}
-		Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
-		ClearConsole();
+		Words.emplace_back(pair<string, wstring>(foreignWord, translatedWord));
+		Utils::ClearConsole();
 	}
 }
 
@@ -98,7 +98,7 @@ void Dictionary::PrintAllWords() const
 	if (wordCount == 0)
 	{
 		cout << "You don't have any words in the dictinary.";
-		PauseAndClearConsole();
+		Utils::PauseAndClearConsole();
 		return;
 	}
 
@@ -111,7 +111,7 @@ void Dictionary::PrintAllWords() const
 	}
 
 	cout << "\nYou have " << wordCount << " translated words in your dictionary.\n";
-	MakePause();
+	Utils::MakePause();
 }
 
 size_t Dictionary::GetWordsCount() const
@@ -127,15 +127,12 @@ void Dictionary::SaveWordsInFile() const
 		return;
 	}
 
+	fstream writingForeignWord(FileWords, ios::out);
+	wfstream writingTranslatedWord(FileWords, ios::out | ios::app);
 
-	const char* filePath = "FileWithWords.txt";
+	writingTranslatedWord.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
 
-	fstream outputFile(filePath, ios::out);
-	wfstream outputFile2(filePath, ios::out | ios::app);
-
-	outputFile2.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
-
-	if (!outputFile.is_open() || !outputFile2.is_open())
+	if (!writingForeignWord.is_open() || !writingTranslatedWord.is_open())
 	{
 		cout << "Couldn't create file.";
 		return;
@@ -143,14 +140,16 @@ void Dictionary::SaveWordsInFile() const
 
 	for (const auto& wordPair : Words)
 	{
-		outputFile << wordPair.first << " -> ";
-		outputFile.flush();
+		writingForeignWord << wordPair.first << " -> ";
+		writingForeignWord.flush();
 
-		outputFile2 << wordPair.second << '\n';
-		outputFile2.flush();
+		writingTranslatedWord << wordPair.second << '\n';
+		writingTranslatedWord.flush();
 
-		outputFile.seekp(0, ios::end);
+		writingForeignWord.seekp(0, ios::end);
 	}
+	cout << "File was created successful.\n";
+	Utils::MakePause();
 }
 
 int Dictionary::GenerateRandomIndex(int oldGuessedIndex) const
@@ -189,9 +188,9 @@ Dictionary::StateOfGame Dictionary::ProcessUserInput(const pair<string, wstring>
 	}
 	else
 	{
-		ClearConsole();
+		Utils::ClearConsole();
 		cout << "You didn't guess try again!\n";
-		PauseAndClearConsole();
+		Utils::PauseAndClearConsole();
 		return StateOfGame::Working;
 	}
 }
@@ -203,15 +202,15 @@ void Dictionary::ProcessGameState(StateOfGame gameState, const pair<string, wstr
 	case Dictionary::StateOfGame::Guessed:
 	{
 		cout << "\nYou guessed!\n";
-		PauseAndClearConsole();
+		Utils::PauseAndClearConsole();
 		break;
 	}
 	case Dictionary::StateOfGame::AnotherWord:
 	{
-		ClearConsole();
+		Utils::ClearConsole();
 		cout << "This word was: " << guessedPair.first << " -> ";
 		wcout << guessedPair.second << endl;
-		PauseAndClearConsole();
+		Utils::PauseAndClearConsole();
 		break;
 	}
 	case Dictionary::StateOfGame::StopGame:

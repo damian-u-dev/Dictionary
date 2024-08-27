@@ -1,5 +1,8 @@
 #pragma once
-void PauseAndClearConsole();
-void ClearConsole();
-void ClearConsoleAndPause();
-void MakePause();
+namespace Utils
+{
+	void PauseAndClearConsole();
+	void ClearConsole();
+	void ClearConsoleAndPause();
+	void MakePause();
+}

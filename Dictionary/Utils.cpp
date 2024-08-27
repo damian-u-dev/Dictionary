@@ -1,24 +1,24 @@
 #include "PCH.h"
 #include "Utils.h"
 
-void PauseAndClearConsole()
+void Utils::PauseAndClearConsole()
 {
 	MakePause();
 	ClearConsole();
 }
 
-void ClearConsoleAndPause()
+void Utils::ClearConsoleAndPause()
 {
 	ClearConsole();
 	MakePause();
 }
 
-void ClearConsole()
+void Utils::ClearConsole()
 {
 	system("cls");
 }
 
-void MakePause()
+void Utils::MakePause()
 {
 	system("pause");
 }

@@ -22,7 +22,7 @@ private:
 
 	string PathForeignWords = R"(D:\ForeignWords.txt)";
 	string PathTranslatedWords = R"(D:\TranslatedWords.txt)";
-
+	string FileWords = "FileWords.txt";
 public:
 	Dictionary();
 	~Dictionary();

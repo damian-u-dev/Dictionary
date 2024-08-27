@@ -27,7 +27,7 @@ void PrintMenu()
 	cout << "1. Add new word\n";
 	cout << "2. Print all words\n";
 	cout << "3. Save all words in the file\n";
-	cout << "4. Make a word\n";
+	cout << "4. Guess a foreign word\n";
 	cout << "0. Exit\n";
 }
 
@@ -37,7 +37,7 @@ void HandleInputError()
 	cin.ignore(LLONG_MAX, '\n');
 
 	cout << "You entered an incorrect number\n";
-	PauseAndClearConsole();
+	Utils::PauseAndClearConsole();
 }
 
 void MainLoop()
@@ -66,25 +66,25 @@ void MainLoop()
 		{
 		case 1:
 		{
-			ClearConsole();
+			Utils::ClearConsole();
 			dictionary.AddNewWord();
 			break;
 		}
 		case 2:
 		{
-			ClearConsole();
+			Utils::ClearConsole();
 			dictionary.PrintAllWords();
 			break;
 		}
 		case 3:
 		{
-			ClearConsole();
+			Utils::ClearConsole();
 			dictionary.SaveWordsInFile();
 			break;
 		}
 		case 4:
 		{
-			ClearConsole();
+			Utils::ClearConsole();
 			dictionary.GuessTranslatedWord();
 			break;
 		}
@@ -97,6 +97,6 @@ void MainLoop()
 			cout << "Invalid choice.Try another\n";
 			break;
 		}
-		ClearConsole();
+		Utils::ClearConsole();
 	}
 }
