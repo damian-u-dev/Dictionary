@@ -33,8 +33,8 @@ public:
 	void GuessTranslatedWord() const;
 
 private:
-	template<typename T, typename T2>
-	void AskUserWord(T& UserWord, basic_istream<T2>& input, const string& messageForUser);
+	template<typename T, typename T2,typename T3>
+	bool AskUserWord(T& UserWord, basic_istream<T2>& input, const string& messageForUser, T3 checkCharacter);
 	bool IsUniqueWord(const string& Word);
 
 	size_t GetWordsCount() const;
@@ -43,8 +43,8 @@ private:
 	void ProcessGameState(StateOfGame GameState, const pair<string, wstring>& guessedPair,bool& isWork) const;
 };
 
-template<typename T, typename T2>
-inline void Dictionary::AskUserWord(T& UserWord, basic_istream<T2>& input, const string& messageForUser)
+template<typename T, typename T2,typename T3>
+inline bool Dictionary::AskUserWord(T& OutUserWord, basic_istream<T2>& input, const string& messageForUser,T3 checkCharacter)
 {
 	bool isWrongWord = true;
 
@@ -52,16 +52,20 @@ inline void Dictionary::AskUserWord(T& UserWord, basic_istream<T2>& input, const
 	{
 		cout << messageForUser << endl;
 
-		getline(input, UserWord);
+		getline(input, OutUserWord);
 		if (!input.good())
 		{
 			input.clear();
 			input.ignore(numeric_limits<streamsize>::max(), '\n');
 			cout << "You wrote an incorrect word.";
 		}
-		else if (UserWord.size() > 1)
+		else if (OutUserWord == checkCharacter)
 		{
-			isWrongWord = false;
+			return true;
+		}
+		else if (OutUserWord.size() > 1)
+		{
+			return false;
 		}
 		else
 		{
@@ -70,4 +74,5 @@ inline void Dictionary::AskUserWord(T& UserWord, basic_istream<T2>& input, const
 			system("cls");
 		}
 	}
+	return false;
 }

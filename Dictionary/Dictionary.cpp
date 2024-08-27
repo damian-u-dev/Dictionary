@@ -63,22 +63,32 @@ bool Dictionary::IsUniqueWord(const string& word)
 
 void Dictionary::AddNewWord()
 {
-	string UserMessage("Write a foreign word: ");
-
-	string ForeignWord;
-
-	do
+	cout << "Tip: If you want to exit write: \"0\"" << endl;
+	
+	while (true)
 	{
-		AskUserWord(ForeignWord, cin, UserMessage);
-	} while (!IsUniqueWord(ForeignWord));
-
-
-	UserMessage = "Write a translation of \"" + ForeignWord + "\": ";
-
-	wstring TranslatedWord;
-	AskUserWord(TranslatedWord, wcin, UserMessage);
-
-	Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
+		string UserMessage("Write a foreign word: ");
+		string ForeignWord;
+		
+		if (AskUserWord(ForeignWord, cin, UserMessage, "0"))
+		{
+			return;
+		}
+		if (!IsUniqueWord(ForeignWord))
+		{
+			continue;
+		}
+		
+		UserMessage = "Write a translation of \"" + ForeignWord + "\": ";
+		wstring TranslatedWord;
+		
+		if (AskUserWord(TranslatedWord, wcin, UserMessage,L"0"))
+		{
+			return;
+		}
+		Words.emplace_back(pair<string, wstring>(ForeignWord, TranslatedWord));
+		ClearConsole();
+	}
 }
 
 void Dictionary::PrintAllWords() const
@@ -101,7 +111,7 @@ void Dictionary::PrintAllWords() const
 	}
 
 	cout << "\nYou have " << wordCount << " translated words in your dictionary.\n";
-	PauseAndClearConsole();
+	MakePause();
 }
 
 size_t Dictionary::GetWordsCount() const
@@ -146,7 +156,7 @@ void Dictionary::SaveWordsInFile() const
 int Dictionary::GenerateRandomIndex(int oldGuessedIndex) const
 {
 	int newGuessedIndex{};
-	srand(time(nullptr));
+	srand(static_cast<unsigned int>(time(nullptr)));
 
 	do
 	{
@@ -227,7 +237,7 @@ void Dictionary::GuessTranslatedWord() const
 		while (gameState == StateOfGame::Working)
 		{
 			gameState = ProcessUserInput(newGuessedPair);
-			ProcessGameState(gameState, newGuessedPair,isGameActive);
+			ProcessGameState(gameState, newGuessedPair, isGameActive);
 		}
 	} while (isGameActive);
 }

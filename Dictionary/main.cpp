@@ -97,6 +97,6 @@ void MainLoop()
 			cout << "Invalid choice.Try another\n";
 			break;
 		}
-
+		ClearConsole();
 	}
 }
