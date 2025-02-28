@@ -20,8 +20,9 @@ private:
 private:
 	vector<pair<string, wstring>> Words;
 
-	string PathForeignWords = R"(D:\ForeignWords.txt)";
-	string PathTranslatedWords = R"(D:\TranslatedWords.txt)";
+	string PathDirectory = R"(C:\ProgramData\Dictionary)";
+	string PathForeignWords = R"(C:\ProgramData\Dictionary\ForeignWords.txt)";
+	string PathTranslatedWords = R"(C:\ProgramData\Dictionary\TranslatedWords.txt)";
 	string FileWords = "FileWords.txt";
 public:
 	Dictionary();
@@ -33,14 +34,16 @@ public:
 	void GuessTranslatedWord() const;
 
 private:
-	template<typename T, typename T2,typename T3>
+	template<typename T, typename T2, typename T3>
 	bool AskUserWord(T& UserWord, basic_istream<T2>& input, const string& messageForUser, T3 checkCharacter);
-	bool IsUniqueWord(const string& Word);
 
-	size_t GetWordsCount() const;
 	int GenerateRandomIndex(int oldGuessedIndex) const;
 	StateOfGame ProcessUserInput(const pair<string, wstring>& newGuessedPair) const;
 	void ProcessGameState(StateOfGame GameState, const pair<string, wstring>& guessedPair,bool& isWork) const;
+
+	bool IsUniqueWord(const string& Word);
+	size_t GetWordsCount() const;
+	bool SizeWordsCorrect() const;
 };
 
 template<typename T, typename T2,typename T3>

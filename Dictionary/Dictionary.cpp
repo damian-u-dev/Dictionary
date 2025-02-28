@@ -4,6 +4,7 @@
 #include <fstream>
 #include <locale>
 #include <codecvt>
+#include "direct.h"
 
 Dictionary::Dictionary()
 {
@@ -23,12 +24,14 @@ Dictionary::Dictionary()
 
 	while (getline(fileForeignWords, foreignWord) && getline(fileTranslatedWords, translatedWord))
 	{
-		Words.emplace_back(foreignWord, translatedWord);
+		Words.emplace_back(move(foreignWord), move(translatedWord));
 	}
 }
 
 Dictionary::~Dictionary()
 {
+	_mkdir(PathDirectory.c_str());
+
 	fstream fileForeignWords(PathForeignWords, ios::out | ios::trunc);
 	wfstream fileTranslatedWords(PathTranslatedWords, ios::out | ios::trunc);
 
@@ -53,7 +56,7 @@ bool Dictionary::IsUniqueWord(const string& word)
 	{
 		if (pairWords.first == word)
 		{
-			cout << "You're trying to enter a word that already has a translation\n";
+			cout << "You entered a foreign word which has a translation\n";
 			Utils::PauseAndClearConsole();
 			return false;
 		}
@@ -64,13 +67,13 @@ bool Dictionary::IsUniqueWord(const string& word)
 void Dictionary::AddNewWord()
 {
 	cout << "Tip: If you want to exit write: \"0\"" << endl;
-	
+
 	while (true)
 	{
-		string userMessage("Write a foreign word: ");
+		string tipMessage("Write a foreign word: ");
 		string foreignWord;
-		
-		if (AskUserWord(foreignWord, cin, userMessage, "0"))
+
+		if (AskUserWord(foreignWord, cin, tipMessage, "0"))
 		{
 			return;
 		}
@@ -78,11 +81,11 @@ void Dictionary::AddNewWord()
 		{
 			continue;
 		}
-		
-		userMessage = "Write a translation of \"" + foreignWord + "\": ";
+
+		tipMessage = "Write a translation of \"" + foreignWord + "\": ";
 		wstring translatedWord;
-		
-		if (AskUserWord(translatedWord, wcin, userMessage,L"0"))
+
+		if (AskUserWord(translatedWord, wcin, tipMessage, L"0"))
 		{
 			return;
 		}
@@ -97,7 +100,7 @@ void Dictionary::PrintAllWords() const
 
 	if (wordCount == 0)
 	{
-		cout << "You don't have any words in the dictinary.";
+		cout << "You don't have any words in the dictionary.";
 		Utils::PauseAndClearConsole();
 		return;
 	}
@@ -121,11 +124,8 @@ size_t Dictionary::GetWordsCount() const
 
 void Dictionary::SaveWordsInFile() const
 {
-	if (GetWordsCount() == 0)
-	{
-		cout << "You don't have any words to save them.\n";
+	if (!SizeWordsCorrect())
 		return;
-	}
 
 	fstream writingForeignWord(FileWords, ios::out);
 	wfstream writingTranslatedWord(FileWords, ios::out | ios::app);
@@ -154,9 +154,9 @@ void Dictionary::SaveWordsInFile() const
 
 int Dictionary::GenerateRandomIndex(int oldGuessedIndex) const
 {
-	int newGuessedIndex{};
 	srand(static_cast<unsigned int>(time(nullptr)));
 
+	int newGuessedIndex{};
 	do
 	{
 		newGuessedIndex = rand() % GetWordsCount();
@@ -208,7 +208,7 @@ void Dictionary::ProcessGameState(StateOfGame gameState, const pair<string, wstr
 	case Dictionary::StateOfGame::AnotherWord:
 	{
 		Utils::ClearConsole();
-		cout << "This word was: " << guessedPair.first << " -> ";
+		cout << "The Guessed word was: " << guessedPair.first << " -> ";
 		wcout << guessedPair.second << endl;
 		Utils::PauseAndClearConsole();
 		break;
@@ -221,8 +221,28 @@ void Dictionary::ProcessGameState(StateOfGame gameState, const pair<string, wstr
 	}
 }
 
+bool Dictionary::SizeWordsCorrect() const
+{
+	if (GetWordsCount() == 0)
+	{
+		cout << "You don't have any words\n";
+		Utils::MakePause();
+		return false;
+	}
+
+	return true;
+}
+
 void Dictionary::GuessTranslatedWord() const
 {
+	if (GetWordsCount() < 2)
+	{
+		cout << "You have only:" << GetWordsCount() << " word.\n"
+				"You can play only if you have 2 or more words." << endl;
+		Utils::PauseAndClearConsole();
+		return;
+	}
+
 	int oldGuessedIndex = -1;
 
 	bool isGameActive = true;
