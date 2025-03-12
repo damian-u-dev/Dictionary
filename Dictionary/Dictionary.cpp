@@ -6,6 +6,8 @@
 #include <codecvt>
 #include "direct.h"
 
+#pragma warning(disable:6031)
+
 Dictionary::Dictionary()
 {
 	fstream fileForeignWords(PathForeignWords, ios::in | ios::app);
@@ -52,7 +54,7 @@ Dictionary::~Dictionary()
 
 bool Dictionary::IsUniqueWord(const string& word)
 {
-	for (auto pairWords : Words)
+	for (const auto& pairWords : Words)
 	{
 		if (pairWords.first == word)
 		{
