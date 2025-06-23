@@ -1,10 +1,12 @@
 #include "PCH.h"
-#include "Dictionary.h"
-#include "Utils.h"
+
 #include <fstream>
 #include <locale>
 #include <codecvt>
-#include "direct.h"
+#include <direct.h>
+
+#include "Dictionary.h"
+#include "Utils.h"
 
 #pragma warning(disable:6031)
 
